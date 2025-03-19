@@ -2,10 +2,10 @@ import axios from "axios";
 import config from "../config/dotenv.js";
 import crypto from "crypto";
 
-const { apiKey, apiSecret, baseUrl } = config;
+const { baseUrl } = config;
 
 // Function to generate the signature for authentication
-const generateSignature = (params) => {
+const generateSignature = (params, apiSecret) => {
   const orderedParams = Object.keys(params)
     .sort()
     .map((key) => `${key}=${params[key]}`)
@@ -18,11 +18,17 @@ const generateSignature = (params) => {
 };
 
 // Function to send signed requests to Bybit API
-const sendRequest = async (endpoint, method = "GET", params = {}) => {
+const sendRequest = async (
+  apiKey,
+  apiSecret,
+  endpoint,
+  method = "GET",
+  params = {}
+) => {
   try {
     params.api_key = apiKey;
     params.timestamp = Date.now();
-    params.sign = generateSignature(params);
+    params.sign = generateSignature(params, apiSecret);
 
     const response = await axios({
       method,
