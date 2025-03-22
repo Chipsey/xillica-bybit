@@ -2,7 +2,6 @@ import User from "../models/User.js";
 import jwt from "jsonwebtoken";
 import bybitService from "./bybitService.js";
 import { encrypt, decrypt } from "../utils/encript.js";
-import crypto from "crypto";
 
 //Generate JWT Token
 const generateToken = (userId) => {
@@ -64,4 +63,24 @@ const checkAccount = async (apiKey, apiSecret) => {
     { accountType: "UNIFIED", coin: "USDT" }
   );
   return response?.retMsg;
+};
+
+export const getApiKeyById = async (userId) => {
+  try {
+    const user = await User.findById(userId);
+    if (!user) throw new Error("User not found!");
+    return decrypt(user.apiKey);
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
+export const getApiSecretById = async (userId) => {
+  try {
+    const user = await User.findById(userId);
+    if (!user) throw new Error("User not found!");
+    return decrypt(user.apiSecret);
+  } catch (error) {
+    throw new Error(error.message);
+  }
 };
